@@ -30,10 +30,42 @@ com.transitboard.audio = function () {
 	},
 	initializeCallback: function (data) {
 	    instance.data = data;
+	    instance.rights = '';
+
+	    for (var agency in data.stopsConfig) {
+		instance.rights += 
+		data.agencyCache.agencyData(agency).rights_notice+" ";
+	    }
+
 	    instance.fillQueue();
 	    instance.speakQueue();
 	}
     });
+};
+
+// these are all the things to replace to make the audio understandable
+com.transitboard.audio.replacements = [
+    ['/', ' '], // otherwise it says "slash"
+    [/ SW /g, ' southwest '],
+    [/ SE /g, ' southeast '],
+    [/ NE /g, ' northeast '],
+    [/ NW /g, ' northwest '],
+    [/ [Dd]ata /g, ' day tuh '],
+    [/ Daly /g, ' day lee '] // as in Daly City, SF bay area
+]
+
+/**
+ * Return TTS-friendly text, that is more likely to soud right
+ * @param {string} text
+ * @returns {string} ttsText
+*/
+com.transitboard.audio.prototype.makeTTSFriendly = function (text) {
+    // pad it with spaces to allow word searches at ends.
+    var ttsText = ' ' + text + ' ';
+    $.each(com.transitboard.audio.replacements, function (ind, repl) {
+	ttsText = ttsText.replace(repl[0], repl[1]);
+    });
+    return ttsText;
 };
 
 /**
@@ -68,7 +100,7 @@ com.transitboard.audio.prototype.speakQueue = function () {
     });
     
     toSpeak += times.join(' and ') + ' minutes';
-    this.speak(toSpeak).done(function () {
+    this.speak(this.makeTTSFriendly(toSpeak)).done(function () {
 	instance.speakQueue();
     });
 };
@@ -102,7 +134,9 @@ com.transitboard.audio.prototype.speak = function (text) {
 */ 
 com.transitboard.audio.prototype.newIteration = function () {
     var instance = this;
-    this.speak('Transit Board Audio, a Portland Transport production')
+    this.speak(this.makeTTSFriendly(
+	'Transit Board Audio, a Portland Transport production. ' +
+	    this.rights))
 	.done(function () {
 	    instance.fillQueue();
 	    instance.speakQueue();
