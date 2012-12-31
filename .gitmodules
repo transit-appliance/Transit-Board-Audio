@@ -1,0 +1,3 @@
+[submodule "speak.js"]
+	path = speak.js
+	url = https://github.com/kripken/speak.js.git

@@ -1,0 +1,1 @@
+speak.js/speakWorker.js

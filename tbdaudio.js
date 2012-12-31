@@ -117,13 +117,19 @@ com.transitboard.audio.prototype.speak = function (text) {
     console.log('Speaking ' + text);
     speak(text);
 
-    // TODO: timeout
     // bind to the ended event of the <audio> element used for synthesis
     // this has to be after the speak() because speak() creates a new audio 
     // element each time.
-    $('#audio audio').one('ended', function () {
-	df.resolve();
-    });
+    var interval;
+    interval = setInterval(function () {
+        var audio = $('#audio audio');
+        if (audio.length > 0) {
+            $('#audio audio').one('ended', function () {
+                df.resolve();
+                clearInterval(interval);
+            });
+        }
+    }, 1000);
 
     return df;
 };
