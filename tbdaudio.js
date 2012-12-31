@@ -1,5 +1,5 @@
 /*
-   Copyright 2011 Portland Transport
+   Copyright 2011-2012 Portland Transport
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ com.transitboard.audio = function () {
 // these are all the things to replace to make the audio understandable
 com.transitboard.audio.replacements = [
     ['/', ' '], // otherwise it says "slash"
+    [/-/, ' '], // or it will say "dash"
     [/ SW /g, ' southwest '],
     [/ SE /g, ' southeast '],
     [/ NE /g, ' northeast '],
